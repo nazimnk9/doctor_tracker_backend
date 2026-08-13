@@ -181,3 +181,64 @@ export const deletePatientFromDoctor = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+/**
+ * @desc    Update doctor details
+ * @route   PUT /api/doctors/:id
+ * @access  Private
+ */
+export const updateDoctor = async (req, res) => {
+  const { name, specialization, hospital, phone, email } = req.body;
+
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    if (email && email !== doctor.email) {
+      const emailExists = await Doctor.findOne({ email });
+      if (emailExists) {
+        return res.status(400).json({ message: 'Doctor with this email already exists' });
+      }
+    }
+
+    doctor.name = name || doctor.name;
+    doctor.specialization = specialization || doctor.specialization;
+    doctor.hospital = hospital || doctor.hospital;
+    doctor.phone = phone || doctor.phone;
+    doctor.email = email || doctor.email;
+
+    const updatedDoctor = await doctor.save();
+    res.json(updatedDoctor);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+/**
+ * @desc    Delete a doctor and their assigned patients
+ * @route   DELETE /api/doctors/:id
+ * @access  Private
+ */
+export const deleteDoctor = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    // Cascade delete: Remove all patients assigned to this doctor
+    await Patient.deleteMany({ doctor: req.params.id });
+
+    // Delete the doctor
+    await Doctor.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Doctor and assigned patients successfully deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+

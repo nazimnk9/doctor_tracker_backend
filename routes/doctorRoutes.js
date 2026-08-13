@@ -5,6 +5,8 @@ import {
   getDoctorPatients,
   addPatientToDoctor,
   deletePatientFromDoctor,
+  updateDoctor,
+  deleteDoctor,
 } from '../controllers/doctorController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -16,11 +18,16 @@ router.route('/')
   .get(getDoctors)
   .post(createDoctor);
 
+router.route('/:id')
+  .put(updateDoctor)
+  .delete(deleteDoctor);
+
 router.route('/:id/patients')
   .get(getDoctorPatients)
   .post(addPatientToDoctor);
 
 router.route('/:id/patients/:patientId')
   .delete(deletePatientFromDoctor);
+
 
 export default router;
