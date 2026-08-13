@@ -113,9 +113,39 @@ The API enforces strict data schemas and indexes for efficiency and security:
 
 #### `PUT /api/doctors/:id`
 * **Description**: Updates an existing doctor's details.
+* **Request Body**:
+  ```json
+  {
+    "name": "Dr. Sarah Connor",
+    "specialization": "Cardiology",
+    "hospital": "City General Hospital",
+    "phone": "+1 (555) 987-6543",
+    "email": "sarah.connor@citygeneral.com"
+  }
+  ```
+* **Success Response (200 OK)**:
+  ```json
+  {
+    "_id": "60d000000000000000000002",
+    "name": "Dr. Sarah Connor",
+    "specialization": "Cardiology",
+    "hospital": "City General Hospital",
+    "phone": "+1 (555) 987-6543",
+    "email": "sarah.connor@citygeneral.com",
+    "createdAt": "2026-08-10T12:00:00.000Z",
+    "updatedAt": "2026-08-13T22:15:00.000Z"
+  }
+  ```
 
 #### `DELETE /api/doctors/:id`
-* **Description**: Deletes a doctor and clears their references from assigned patients.
+* **Description**: Deletes a doctor and performs a cascade deletion of all assigned patient records.
+* **Success Response (200 OK)**:
+  ```json
+  {
+    "message": "Doctor and assigned patients successfully deleted"
+  }
+  ```
+
 
 ---
 
